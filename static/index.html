@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>agentic-pm — AI Project Status Reporting</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f1117; color: #e2e8f0; min-height: 100vh; }
+  .header { background: #1a1f2e; border-bottom: 1px solid #2d3748; padding: 16px 24px; display: flex; align-items: center; gap: 12px; }
+  .header h1 { font-size: 18px; font-weight: 600; color: #fff; }
+  .header .badge { font-size: 11px; background: #1e40af; color: #93c5fd; padding: 3px 8px; border-radius: 4px; }
+  .header .sub { font-size: 13px; color: #64748b; margin-left: auto; }
+  .container { max-width: 860px; margin: 0 auto; padding: 32px 24px; }
+  .card { background: #1a1f2e; border: 1px solid #2d3748; border-radius: 10px; padding: 24px; margin-bottom: 20px; }
+  .card h2 { font-size: 14px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+  label { font-size: 13px; color: #94a3b8; display: block; margin-bottom: 6px; }
+  input, select, textarea { width: 100%; background: #0f1117; border: 1px solid #2d3748; border-radius: 6px; color: #e2e8f0; font-size: 13px; padding: 8px 12px; outline: none; transition: border-color 0.2s; font-family: inherit; }
+  input:focus, select:focus, textarea:focus { border-color: #3b82f6; }
+  textarea { font-family: 'Courier New', monospace; resize: vertical; line-height: 1.6; }
+  .format-hint { font-size: 11px; color: #475569; margin-bottom: 8px; font-family: monospace; background: #0f1117; padding: 6px 10px; border-radius: 4px; border: 1px solid #1e293b; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px; }
+  button { padding: 8px 16px; border-radius: 6px; font-size: 13px; font-weight: 500; cursor: pointer; border: 1px solid #2d3748; background: #1e293b; color: #e2e8f0; transition: all 0.15s; }
+  button:hover { background: #2d3748; }
+  .btn-primary { background: #1d4ed8; border-color: #2563eb; color: #fff; }
+  .btn-primary:hover { background: #2563eb; }
+  .rag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  .rag-badge { padding: 5px 12px; border-radius: 5px; font-size: 12px; font-weight: 600; }
+  .rag-RED { background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; }
+  .rag-AMBER { background: #451a03; color: #fcd34d; border: 1px solid #78350f; }
+  .rag-GREEN { background: #052e16; color: #86efac; border: 1px solid #14532d; }
+  .report-box { background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; padding: 20px; font-size: 13px; line-height: 1.8; white-space: pre-wrap; font-family: 'Courier New', monospace; max-height: 520px; overflow-y: auto; color: #cbd5e1; }
+  .progress-bar { width: 100%; height: 3px; background: #1e293b; border-radius: 2px; overflow: hidden; margin-top: 12px; }
+  .progress-fill { height: 100%; background: #3b82f6; border-radius: 2px; transition: width 0.4s ease; }
+  .loading-msg { font-size: 13px; color: #64748b; margin-top: 8px; }
+  .error-box { background: #450a0a; border: 1px solid #7f1d1d; border-radius: 6px; padding: 12px 16px; color: #fca5a5; font-size: 13px; margin-top: 16px; }
+  .report-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; }
+  .github-link { font-size: 12px; color: #3b82f6; text-decoration: none; }
+  .github-link:hover { text-decoration: underline; }
+  @media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+  <h1>agentic-pm</h1>
+  <span class="badge">v0.1</span>
+  <span class="sub">AI-assisted project status reporting</span>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <h2>Project details</h2>
+    <div class="row">
+      <div>
+        <label>Project name</label>
+        <input type="text" id="projectName" placeholder="e.g. D365 Go-Live" />
+      </div>
+      <div>
+        <label>Stakeholder level</label>
+        <select id="stakeholder">
+          <option value="delivery">Delivery team</option>
+          <option value="executive">Executive / steering committee</option>
+          <option value="board">Board (3 sentences)</option>
+        </select>
+      </div>
+    </div>
+
+    <label>Tasks (one per line)</label>
+    <div class="format-hint">Workstream | Task name | Owner | Due date | Status | Blockers</div>
+    <textarea id="taskInput" rows="10" placeholder="ERP Migration | Complete data mapping | Tope | 15/06/2026 | In Progress | Awaiting Finance sign-off
+ERP Migration | UAT sign-off AP module | Sarah | 10/06/2026 | At Risk | Test environment unstable
+Infrastructure | Firewall rule changes | Dev | 20/06/2026 | In Progress | None
+Infrastructure | Network cutover rehearsal | Dev | 25/06/2026 | Not Started | None
+Change Management | Training delivery Wave 1 | Marcus | 12/06/2026 | In Progress | None
+Change Management | Go-live comms pack | Marcus | 08/06/2026 | At Risk | Comms director on leave
+Governance | Steering committee pack | Tope | 05/06/2026 | Complete | None
+Governance | Risk register updated | Tope | 18/06/2026 | Not Started | None"></textarea>
+
+    <div class="btn-row">
+      <button onclick="loadSample()">Load sample data</button>
+      <button class="btn-primary" onclick="runAnalysis()">&#9654; Generate status report</button>
+      <button onclick="clearAll()">Clear</button>
+    </div>
+
+    <div id="loadingSection" style="display:none;">
+      <div class="progress-bar"><div class="progress-fill" id="progressBar" style="width:0%"></div></div>
+      <p class="loading-msg" id="loadingMsg">Analysing tasks...</p>
+    </div>
+    <div id="errorSection" style="display:none;" class="error-box" id="errorMsg"></div>
+  </div>
+
+  <div id="resultsCard" class="card" style="display:none;">
+    <h2>Workstream RAG</h2>
+    <div class="rag-row" id="ragCards"></div>
+
+    <div class="report-header">
+      <span style="font-size:14px; font-weight:600; color:#94a3b8;">Status report</span>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <a href="https://github.com/TemitopeKadri/agentic-pm" target="_blank" class="github-link">View on GitHub</a>
+        <button onclick="copyReport()">Copy report</button>
+      </div>
+    </div>
+    <div class="report-box" id="reportOutput"></div>
+  </div>
+
+</div>
+
+<script>
+const SAMPLE_TASKS = `ERP Migration | Complete data mapping for GL accounts | Tope | 15/06/2026 | In Progress | Awaiting Finance sign-off
+ERP Migration | UAT sign-off AP module | Sarah | 10/06/2026 | At Risk | Test environment unstable
+Infrastructure | Firewall rule changes | Dev | 20/06/2026 | In Progress | None
+Infrastructure | Network cutover rehearsal | Dev | 25/06/2026 | Not Started | None
+Change Management | Training delivery Wave 1 | Marcus | 12/06/2026 | In Progress | None
+Change Management | Go-live comms pack | Marcus | 08/06/2026 | At Risk | Comms director on leave
+Governance | Steering committee pack | Tope | 05/06/2026 | Complete | None
+Governance | Risk register updated | Tope | 18/06/2026 | Not Started | None`;
+
+function loadSample() {
+  document.getElementById('taskInput').value = SAMPLE_TASKS;
+  document.getElementById('projectName').value = 'ERP Migration';
+}
+
+function clearAll() {
+  document.getElementById('taskInput').value = '';
+  document.getElementById('projectName').value = '';
+  document.getElementById('resultsCard').style.display = 'none';
+  document.getElementById('errorSection').style.display = 'none';
+}
+
+function copyReport() {
+  navigator.clipboard.writeText(document.getElementById('reportOutput').innerText);
+}
+
+function parseTasks(raw) {
+  return raw.trim().split('\n').filter(l => l.trim()).map(line => {
+    const p = line.split('|').map(s => s.trim());
+    return { workstream: p[0]||'General', task: p[1]||'', owner: p[2]||'', due: p[3]||'', status: p[4]||'Not Started', blockers: p[5]||'None' };
+  });
+}
+
+function risk(t) {
+  const s = (t.status||'').toLowerCase(), b = (t.blockers||'').toLowerCase();
+  if (s==='complete') return 'LOW';
+  if (s==='at risk'||(b&&b!=='none'&&b!=='-'&&b!=='')) return 'HIGH';
+  if (s==='not started') return 'MEDIUM';
+  return 'LOW';
+}
+
+function rag(tasks) {
+  const r = tasks.map(risk);
+  return r.includes('HIGH') ? 'RED' : r.includes('MEDIUM') ? 'AMBER' : 'GREEN';
+}
+
+function setProgress(pct, msg) {
+  document.getElementById('progressBar').style.width = pct + '%';
+  document.getElementById('loadingMsg').textContent = msg;
+}
+
+async function runAnalysis() {
+  const raw = document.getElementById('taskInput').value.trim();
+  if (!raw) { showError('Please enter at least one task.'); return; }
+  const tasks = parseTasks(raw);
+  if (!tasks.length) { showError('Could not parse tasks. Check the format.'); return; }
+
+  hideError();
+  document.getElementById('resultsCard').style.display = 'none';
+  document.getElementById('loadingSection').style.display = 'block';
+  setProgress(20, 'Scoring workstream risk...');
+
+  const wsGroups = {};
+  tasks.forEach(t => { if (!wsGroups[t.workstream]) wsGroups[t.workstream] = []; wsGroups[t.workstream].push(t); });
+
+  const ragCards = document.getElementById('ragCards');
+  ragCards.innerHTML = '';
+  Object.entries(wsGroups).forEach(([ws, ts]) => {
+    const r = rag(ts);
+    const d = document.createElement('span');
+    d.className = 'rag-badge rag-' + r;
+    d.textContent = ws + ': ' + r;
+    ragCards.appendChild(d);
+  });
+
+  setProgress(50, 'Generating report via AI...');
+
+  const today = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+
+  try {
+    const res = await fetch('/api/analyse', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        tasks,
+        stakeholder: document.getElementById('stakeholder').value,
+        projectName: document.getElementById('projectName').value || 'Project',
+        today
+      })
+    });
+    const data = await res.json();
+    setProgress(100, 'Done');
+    if (data.error) { showError(data.error); return; }
+    setTimeout(() => {
+      document.getElementById('loadingSection').style.display = 'none';
+      document.getElementById('reportOutput').textContent = data.report;
+      document.getElementById('resultsCard').style.display = 'block';
+    }, 300);
+  } catch(e) {
+    showError('Request failed: ' + e.message);
+  }
+}
+
+function showError(msg) {
+  document.getElementById('loadingSection').style.display = 'none';
+  const el = document.getElementById('errorSection');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+function hideError() {
+  document.getElementById('errorSection').style.display = 'none';
+}
+</script>
+</body>
+</html>
