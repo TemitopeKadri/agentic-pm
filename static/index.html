@@ -29,6 +29,8 @@
   .btn-success:hover { background: #15803d; }
   .btn-purple { background: #4c1d95; border-color: #7c3aed; color: #c4b5fd; }
   .btn-purple:hover { background: #5b21b6; }
+  .btn-word { background: #1e3a5f; border-color: #2563eb; color: #93c5fd; }
+  .btn-word:hover { background: #1e40af; }
   .upload-zone { border: 2px dashed #2d3748; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; }
   .upload-zone:hover, .upload-zone.dragover { border-color: #3b82f6; background: #1e293b; }
   .upload-zone p { font-size: 13px; color: #64748b; margin: 4px 0; }
@@ -51,6 +53,7 @@
   .github-link { font-size: 12px; color: #3b82f6; text-decoration: none; }
   .github-link:hover { text-decoration: underline; }
   .template-link { font-size: 12px; color: #94a3b8; cursor: pointer; text-decoration: underline; }
+  .export-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
   @media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
 
   @media print {
@@ -58,31 +61,16 @@
     body { background: #fff !important; color: #000 !important; font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; }
     .header, .no-print { display: none !important; }
     .container { max-width: 100%; padding: 0; margin: 0; }
-    #resultsCard { border: none !important; background: #fff !important; padding: 0 !important; box-shadow: none !important; }
-
+    #resultsCard { border: none !important; background: #fff !important; padding: 0 !important; }
     .print-header { display: block !important; border-bottom: 2px solid #1a3557; padding-bottom: 12px; margin-bottom: 20px; }
     .print-header h1 { font-size: 18pt; font-weight: 700; color: #1a3557; margin-bottom: 4px; }
     .print-header p { font-size: 10pt; color: #555; }
-
     .rag-row { margin-bottom: 16px; }
-    .rag-badge { font-size: 10pt; padding: 4px 10px; border-radius: 4px; }
+    .rag-badge { font-size: 10pt; padding: 4px 10px; }
     .rag-RED { background: #fee2e2 !important; color: #991b1b !important; border: 1px solid #fca5a5 !important; }
     .rag-AMBER { background: #fef3c7 !important; color: #92400e !important; border: 1px solid #fcd34d !important; }
     .rag-GREEN { background: #dcfce7 !important; color: #166534 !important; border: 1px solid #86efac !important; }
-
-    .report-box {
-      background: #fff !important;
-      color: #000 !important;
-      border: none !important;
-      padding: 0 !important;
-      max-height: none !important;
-      overflow: visible !important;
-      white-space: pre-wrap;
-      font-family: 'Segoe UI', Arial, sans-serif !important;
-      font-size: 10.5pt !important;
-      line-height: 1.7 !important;
-    }
-    .report-header .no-print { display: none !important; }
+    .report-box { background: #fff !important; color: #000 !important; border: none !important; padding: 0 !important; max-height: none !important; overflow: visible !important; white-space: pre-wrap; font-family: 'Segoe UI', Arial, sans-serif !important; font-size: 10.5pt !important; line-height: 1.7 !important; }
     .report-header span { font-size: 12pt; font-weight: 700; color: #1a3557; }
     .print-footer { display: block !important; border-top: 1px solid #ccc; margin-top: 24px; padding-top: 8px; font-size: 9pt; color: #888; }
   }
@@ -95,12 +83,11 @@
 <div class="header">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
   <h1>agentic-pm</h1>
-  <span class="badge">v0.2</span>
+  <span class="badge">v0.3</span>
   <span class="sub">AI-assisted project status reporting</span>
 </div>
 
 <div class="container">
-
   <div class="card no-print">
     <h2>Project details</h2>
     <div class="row">
@@ -150,8 +137,7 @@ Governance | Steering committee pack | Tope | 05/06/2026 | Complete | None"></te
   </div>
 
   <div id="resultsCard" class="card" style="display:none;">
-
-    <div class="print-header" id="printHeader">
+    <div class="print-header">
       <h1 id="printTitle">Project Status Report</h1>
       <p id="printMeta"></p>
     </div>
@@ -161,18 +147,17 @@ Governance | Steering committee pack | Tope | 05/06/2026 | Complete | None"></te
 
     <div class="report-header">
       <span style="font-size:14px; font-weight:600; color:#94a3b8;">Status report</span>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;" class="no-print">
-        <a href="https://github.com/TemitopeKadri/agentic-pm" target="_blank" class="github-link">View on GitHub</a>
+      <div class="export-row no-print">
+        <a href="https://github.com/TemitopeKadri/agentic-pm" target="_blank" class="github-link">GitHub</a>
         <button onclick="copyReport()">&#128203; Copy</button>
-        <button class="btn-success" onclick="downloadReport()">&#8595; Download .txt</button>
-        <button class="btn-purple" onclick="printReport()">&#128438; Print / Save PDF</button>
+        <button class="btn-success" onclick="downloadTxt()">&#8595; .txt</button>
+        <button class="btn-word" onclick="downloadWord()">&#128196; Word (.doc)</button>
+        <button class="btn-purple" onclick="printReport()">&#128438; Print / PDF</button>
       </div>
     </div>
     <div class="report-box" id="reportOutput"></div>
-
     <div class="print-footer">Generated by agentic-pm &mdash; github.com/TemitopeKadri/agentic-pm &mdash; Built by Temitope Kadri MAPM</div>
   </div>
-
 </div>
 
 <script>
@@ -205,32 +190,26 @@ function clearAll() {
 }
 
 function downloadTemplate() {
-  const blob = new Blob([TEMPLATE_CSV], {type: 'text/csv'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'agentic-pm-template.csv';
-  a.click();
+  const blob = new Blob([TEMPLATE_CSV], {type:'text/csv'});
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = 'agentic-pm-template.csv'; a.click();
 }
 
 function handleFileUpload(event) {
-  const file = event.target.files[0];
-  if (!file) return;
+  const file = event.target.files[0]; if (!file) return;
   const reader = new FileReader();
   reader.onload = function(e) {
-    const text = e.target.result;
-    const lines = text.trim().split('\n');
+    const lines = e.target.result.trim().split('\n');
     const isHeader = lines[0].toLowerCase().includes('workstream') || lines[0].toLowerCase().includes('task');
-    const start = isHeader ? 1 : 0;
     const parsed = [];
-    for (let i = start; i < lines.length; i++) {
-      const line = lines[i].trim();
-      if (!line) continue;
+    for (let i = isHeader?1:0; i < lines.length; i++) {
+      const line = lines[i].trim(); if (!line) continue;
       const sep = line.includes(',') && !line.includes('|') ? ',' : '|';
       const parts = line.split(sep).map(s => s.trim());
       if (parts.length >= 5) parsed.push(parts.join(' | '));
     }
     document.getElementById('taskInput').value = parsed.join('\n');
-    document.getElementById('projectName').value = file.name.replace('.csv','').replace(/-/g,' ').replace(/_/g,' ');
+    document.getElementById('projectName').value = file.name.replace('.csv','').replace(/[-_]/g,' ');
     const fl = document.getElementById('fileLoaded');
     fl.textContent = '\u2713 Loaded ' + parsed.length + ' tasks from ' + file.name;
     fl.style.display = 'block';
@@ -238,126 +217,169 @@ function handleFileUpload(event) {
   reader.readAsText(file);
 }
 
-const uploadZone = document.getElementById('uploadZone');
-uploadZone.addEventListener('dragover', e => { e.preventDefault(); uploadZone.classList.add('dragover'); });
-uploadZone.addEventListener('dragleave', () => uploadZone.classList.remove('dragover'));
-uploadZone.addEventListener('drop', e => {
-  e.preventDefault();
-  uploadZone.classList.remove('dragover');
-  const file = e.dataTransfer.files[0];
-  if (file && file.name.endsWith('.csv')) handleFileUpload({ target: { files: [file] } });
+const uz = document.getElementById('uploadZone');
+uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('dragover'); });
+uz.addEventListener('dragleave', () => uz.classList.remove('dragover'));
+uz.addEventListener('drop', e => {
+  e.preventDefault(); uz.classList.remove('dragover');
+  const f = e.dataTransfer.files[0];
+  if (f && f.name.endsWith('.csv')) handleFileUpload({target:{files:[f]}});
 });
 
-function copyReport() {
-  navigator.clipboard.writeText(document.getElementById('reportOutput').innerText);
-}
+function copyReport() { navigator.clipboard.writeText(document.getElementById('reportOutput').innerText); }
 
-function downloadReport() {
-  const name = document.getElementById('projectName').value || 'project';
+function downloadTxt() {
+  const name = (document.getElementById('projectName').value||'project').replace(/\s+/g,'-').toLowerCase();
   const date = new Date().toISOString().slice(0,10);
   const blob = new Blob([document.getElementById('reportOutput').innerText], {type:'text/plain'});
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = name.replace(/\s+/g,'-').toLowerCase() + '-status-' + date + '.txt';
-  a.click();
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = name + '-status-' + date + '.txt'; a.click();
+}
+
+function downloadWord() {
+  const name = document.getElementById('projectName').value || 'Project';
+  const date = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+  const stk = document.getElementById('stakeholder');
+  const stkLabel = stk.options[stk.selectedIndex].text;
+  const ragCards = document.getElementById('ragCards');
+  const ragBadges = Array.from(ragCards.querySelectorAll('.rag-badge')).map(b => b.textContent).join('    ');
+  const report = document.getElementById('reportOutput').innerText;
+
+  const ragColors = { RED: '#C0392B', AMBER: '#E67E22', GREEN: '#27AE60' };
+  let ragTableRows = '';
+  Array.from(ragCards.querySelectorAll('.rag-badge')).forEach(b => {
+    const txt = b.textContent;
+    const status = txt.includes('RED') ? 'RED' : txt.includes('AMBER') ? 'AMBER' : 'GREEN';
+    const col = ragColors[status];
+    const ws = txt.replace(':'+status,'').replace(': RED','').replace(': AMBER','').replace(': GREEN','').trim();
+    ragTableRows += `<tr><td style="padding:6px 12px;border:1px solid #ddd;">${ws}</td><td style="padding:6px 12px;border:1px solid #ddd;background:${col};color:#fff;font-weight:bold;text-align:center;">${status}</td></tr>`;
+  });
+
+  const lines = report.split('\n');
+  let bodyHtml = '';
+  lines.forEach(line => {
+    const trimmed = line.trim();
+    if (!trimmed) { bodyHtml += '<p>&nbsp;</p>'; return; }
+    if (trimmed.startsWith('## ')) {
+      bodyHtml += `<h2 style="color:#1A3557;font-size:14pt;margin-top:18px;margin-bottom:6px;border-bottom:1px solid #1A3557;padding-bottom:4px;">${trimmed.replace('## ','')}</h2>`;
+    } else if (trimmed.startsWith('# ')) {
+      bodyHtml += `<h1 style="color:#1A3557;font-size:16pt;margin-top:20px;margin-bottom:8px;">${trimmed.replace('# ','')}</h1>`;
+    } else if (trimmed.startsWith('- ') || trimmed.startsWith('* ')) {
+      bodyHtml += `<p style="margin-left:20px;margin-bottom:4px;">&bull; ${trimmed.substring(2)}</p>`;
+    } else if (trimmed.startsWith('**') && trimmed.endsWith('**')) {
+      bodyHtml += `<p style="font-weight:bold;margin-bottom:4px;">${trimmed.replace(/\*\*/g,'')}</p>`;
+    } else {
+      let formatted = trimmed.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      bodyHtml += `<p style="margin-bottom:4px;line-height:1.6;">${formatted}</p>`;
+    }
+  });
+
+  const html = `<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
+<head><meta charset="UTF-8">
+<style>
+  body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #222; margin: 2cm; }
+  h1 { color: #1A3557; font-size: 18pt; }
+  h2 { color: #1A3557; font-size: 13pt; border-bottom: 1px solid #1A3557; padding-bottom: 3px; margin-top: 16px; }
+  table { border-collapse: collapse; margin-bottom: 16px; }
+  td, th { padding: 6px 12px; border: 1px solid #ddd; font-size: 10pt; }
+  th { background: #1A3557; color: #fff; font-weight: bold; }
+  .footer { font-size: 9pt; color: #888; border-top: 1px solid #ccc; margin-top: 32px; padding-top: 8px; }
+</style>
+</head>
+<body>
+<h1>${name} &mdash; Status Report</h1>
+<p style="color:#555;font-size:10pt;">Date: ${date} &nbsp;|&nbsp; Report type: ${stkLabel} &nbsp;|&nbsp; Generated by agentic-pm</p>
+<hr style="border:1px solid #1A3557;margin:12px 0 20px;">
+<h2>Workstream RAG Status</h2>
+<table><tr><th>Workstream</th><th>Status</th></tr>${ragTableRows}</table>
+<h2>Status Report</h2>
+${bodyHtml}
+<div class="footer">Generated by agentic-pm &mdash; github.com/TemitopeKadri/agentic-pm &mdash; Built by Temitope Kadri MAPM</div>
+</body></html>`;
+
+  const blob = new Blob(['\ufeff' + html], {type:'application/msword'});
+  const fname = (name.replace(/\s+/g,'-').toLowerCase()) + '-status-' + new Date().toISOString().slice(0,10) + '.doc';
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = fname; a.click();
 }
 
 function printReport() {
   const name = document.getElementById('projectName').value || 'Project';
-  const date = new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'});
+  const date = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
   const stk = document.getElementById('stakeholder');
-  const stkLabel = stk.options[stk.selectedIndex].text;
-  document.getElementById('printTitle').textContent = name + ' — Status Report';
-  document.getElementById('printMeta').textContent = 'Date: ' + date + '  |  Report type: ' + stkLabel + '  |  Generated by agentic-pm';
+  document.getElementById('printTitle').textContent = name + ' \u2014 Status Report';
+  document.getElementById('printMeta').textContent = 'Date: ' + date + '  |  Report type: ' + stk.options[stk.selectedIndex].text + '  |  Generated by agentic-pm';
   window.print();
 }
 
 function parseTasks(raw) {
   return raw.trim().split('\n').filter(l => l.trim()).map(line => {
     const p = line.split('|').map(s => s.trim());
-    return { workstream: p[0]||'General', task: p[1]||'', owner: p[2]||'', due: p[3]||'', status: p[4]||'Not Started', blockers: p[5]||'None' };
+    return {workstream:p[0]||'General',task:p[1]||'',owner:p[2]||'',due:p[3]||'',status:p[4]||'Not Started',blockers:p[5]||'None'};
   });
 }
 
 function risk(t) {
-  const s = (t.status||'').toLowerCase(), b = (t.blockers||'').toLowerCase();
-  if (s==='complete') return 'LOW';
-  if (s==='at risk'||(b&&b!=='none'&&b!=='-'&&b!=='')) return 'HIGH';
-  if (s==='not started') return 'MEDIUM';
+  const s=(t.status||'').toLowerCase(), b=(t.blockers||'').toLowerCase();
+  if(s==='complete') return 'LOW';
+  if(s==='at risk'||(b&&b!=='none'&&b!=='-'&&b!=='')) return 'HIGH';
+  if(s==='not started') return 'MEDIUM';
   return 'LOW';
 }
 
 function rag(tasks) {
-  const r = tasks.map(risk);
-  return r.includes('HIGH') ? 'RED' : r.includes('MEDIUM') ? 'AMBER' : 'GREEN';
+  const r=tasks.map(risk);
+  return r.includes('HIGH')?'RED':r.includes('MEDIUM')?'AMBER':'GREEN';
 }
 
-function setProgress(pct, msg) {
-  document.getElementById('progressBar').style.width = pct + '%';
-  document.getElementById('loadingMsg').textContent = msg;
+function setProgress(pct,msg) {
+  document.getElementById('progressBar').style.width=pct+'%';
+  document.getElementById('loadingMsg').textContent=msg;
 }
 
 async function runAnalysis() {
   const raw = document.getElementById('taskInput').value.trim();
-  if (!raw) { showError('Please enter or upload at least one task.'); return; }
+  if(!raw){showError('Please enter or upload at least one task.');return;}
   const tasks = parseTasks(raw);
-  if (!tasks.length) { showError('Could not parse tasks. Check the format.'); return; }
+  if(!tasks.length){showError('Could not parse tasks. Check the format.');return;}
 
   hideError();
-  document.getElementById('resultsCard').style.display = 'none';
-  document.getElementById('loadingSection').style.display = 'block';
-  setProgress(20, 'Scoring workstream risk...');
+  document.getElementById('resultsCard').style.display='none';
+  document.getElementById('loadingSection').style.display='block';
+  setProgress(20,'Scoring workstream risk...');
 
-  const wsGroups = {};
-  tasks.forEach(t => { if (!wsGroups[t.workstream]) wsGroups[t.workstream] = []; wsGroups[t.workstream].push(t); });
+  const wsGroups={};
+  tasks.forEach(t=>{if(!wsGroups[t.workstream])wsGroups[t.workstream]=[];wsGroups[t.workstream].push(t);});
 
-  const ragCards = document.getElementById('ragCards');
-  ragCards.innerHTML = '';
-  Object.entries(wsGroups).forEach(([ws, ts]) => {
-    const r = rag(ts);
-    const d = document.createElement('span');
-    d.className = 'rag-badge rag-' + r;
-    d.textContent = ws + ': ' + r;
-    ragCards.appendChild(d);
+  const rc=document.getElementById('ragCards'); rc.innerHTML='';
+  Object.entries(wsGroups).forEach(([ws,ts])=>{
+    const r=rag(ts); const d=document.createElement('span');
+    d.className='rag-badge rag-'+r; d.textContent=ws+': '+r; rc.appendChild(d);
   });
 
-  setProgress(50, 'Generating report via AI...');
-  const today = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
+  setProgress(50,'Generating report via AI...');
+  const today=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'});
 
   try {
-    const res = await fetch('/api/analyse', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({
-        tasks,
-        stakeholder: document.getElementById('stakeholder').value,
-        projectName: document.getElementById('projectName').value || 'Project',
-        today
-      })
+    const res=await fetch('/api/analyse',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({tasks, stakeholder:document.getElementById('stakeholder').value, projectName:document.getElementById('projectName').value||'Project', today})
     });
-    const data = await res.json();
-    setProgress(100, 'Done');
-    if (data.error) { showError(data.error); return; }
-    setTimeout(() => {
-      document.getElementById('loadingSection').style.display = 'none';
-      document.getElementById('reportOutput').textContent = data.report;
-      document.getElementById('resultsCard').style.display = 'block';
-    }, 300);
-  } catch(e) {
-    showError('Request failed: ' + e.message);
-  }
+    const data=await res.json(); setProgress(100,'Done');
+    if(data.error){showError(data.error);return;}
+    setTimeout(()=>{
+      document.getElementById('loadingSection').style.display='none';
+      document.getElementById('reportOutput').textContent=data.report;
+      document.getElementById('resultsCard').style.display='block';
+    },300);
+  } catch(e){showError('Request failed: '+e.message);}
 }
 
-function showError(msg) {
-  document.getElementById('loadingSection').style.display = 'none';
-  const el = document.getElementById('errorSection');
-  el.textContent = msg;
-  el.style.display = 'block';
+function showError(msg){
+  document.getElementById('loadingSection').style.display='none';
+  const el=document.getElementById('errorSection'); el.textContent=msg; el.style.display='block';
 }
-
-function hideError() {
-  document.getElementById('errorSection').style.display = 'none';
-}
+function hideError(){document.getElementById('errorSection').style.display='none';}
 </script>
 </body>
 </html>
