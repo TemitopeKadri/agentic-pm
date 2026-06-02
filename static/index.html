@@ -29,23 +29,19 @@
   .btn-success:hover { background: #15803d; }
   .btn-purple { background: #4c1d95; border-color: #7c3aed; color: #c4b5fd; }
   .btn-purple:hover { background: #5b21b6; }
-
   .upload-zone { border: 2px dashed #2d3748; border-radius: 8px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 12px; }
   .upload-zone:hover, .upload-zone.dragover { border-color: #3b82f6; background: #1e293b; }
   .upload-zone p { font-size: 13px; color: #64748b; margin: 4px 0; }
   .upload-zone .icon { font-size: 24px; margin-bottom: 6px; }
   .upload-zone input[type=file] { display: none; }
   .file-loaded { font-size: 12px; color: #86efac; margin-top: 6px; }
-
   .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: #475569; font-size: 12px; }
   .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #2d3748; }
-
   .rag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
   .rag-badge { padding: 5px 12px; border-radius: 5px; font-size: 12px; font-weight: 600; }
   .rag-RED { background: #450a0a; color: #fca5a5; border: 1px solid #7f1d1d; }
   .rag-AMBER { background: #451a03; color: #fcd34d; border: 1px solid #78350f; }
   .rag-GREEN { background: #052e16; color: #86efac; border: 1px solid #14532d; }
-
   .report-box { background: #0f1117; border: 1px solid #2d3748; border-radius: 8px; padding: 20px; font-size: 13px; line-height: 1.8; white-space: pre-wrap; font-family: 'Courier New', monospace; max-height: 520px; overflow-y: auto; color: #cbd5e1; }
   .progress-bar { width: 100%; height: 3px; background: #1e293b; border-radius: 2px; overflow: hidden; margin-top: 12px; }
   .progress-fill { height: 100%; background: #3b82f6; border-radius: 2px; transition: width 0.4s ease; }
@@ -55,19 +51,43 @@
   .github-link { font-size: 12px; color: #3b82f6; text-decoration: none; }
   .github-link:hover { text-decoration: underline; }
   .template-link { font-size: 12px; color: #94a3b8; cursor: pointer; text-decoration: underline; }
-
   @media (max-width: 600px) { .row { grid-template-columns: 1fr; } }
 
   @media print {
-    body { background: #fff; color: #000; }
-    .header, .card:not(#resultsCard), .no-print { display: none !important; }
-    #resultsCard { border: none; background: #fff; padding: 0; }
-    .rag-badge { border: 1px solid #ccc; color: #000 !important; background: #f5f5f5 !important; }
-    .report-box { background: #fff; color: #000; border: 1px solid #ccc; max-height: none; font-size: 12px; }
-    .report-header button { display: none; }
-    .print-title { display: block !important; font-size: 20px; font-weight: bold; margin-bottom: 16px; color: #000; }
+    * { box-sizing: border-box; }
+    body { background: #fff !important; color: #000 !important; font-family: 'Segoe UI', Arial, sans-serif; font-size: 11pt; }
+    .header, .no-print { display: none !important; }
+    .container { max-width: 100%; padding: 0; margin: 0; }
+    #resultsCard { border: none !important; background: #fff !important; padding: 0 !important; box-shadow: none !important; }
+
+    .print-header { display: block !important; border-bottom: 2px solid #1a3557; padding-bottom: 12px; margin-bottom: 20px; }
+    .print-header h1 { font-size: 18pt; font-weight: 700; color: #1a3557; margin-bottom: 4px; }
+    .print-header p { font-size: 10pt; color: #555; }
+
+    .rag-row { margin-bottom: 16px; }
+    .rag-badge { font-size: 10pt; padding: 4px 10px; border-radius: 4px; }
+    .rag-RED { background: #fee2e2 !important; color: #991b1b !important; border: 1px solid #fca5a5 !important; }
+    .rag-AMBER { background: #fef3c7 !important; color: #92400e !important; border: 1px solid #fcd34d !important; }
+    .rag-GREEN { background: #dcfce7 !important; color: #166534 !important; border: 1px solid #86efac !important; }
+
+    .report-box {
+      background: #fff !important;
+      color: #000 !important;
+      border: none !important;
+      padding: 0 !important;
+      max-height: none !important;
+      overflow: visible !important;
+      white-space: pre-wrap;
+      font-family: 'Segoe UI', Arial, sans-serif !important;
+      font-size: 10.5pt !important;
+      line-height: 1.7 !important;
+    }
+    .report-header .no-print { display: none !important; }
+    .report-header span { font-size: 12pt; font-weight: 700; color: #1a3557; }
+    .print-footer { display: block !important; border-top: 1px solid #ccc; margin-top: 24px; padding-top: 8px; font-size: 9pt; color: #888; }
   }
-  .print-title { display: none; }
+  .print-header { display: none; }
+  .print-footer { display: none; }
 </style>
 </head>
 <body>
@@ -106,7 +126,6 @@
       <input type="file" id="csvFile" accept=".csv" onchange="handleFileUpload(event)" />
       <div class="file-loaded" id="fileLoaded" style="display:none;"></div>
     </div>
-
     <a class="template-link" onclick="downloadTemplate()">Download blank CSV template</a>
 
     <div class="divider">or type / paste tasks manually</div>
@@ -115,11 +134,7 @@
     <textarea id="taskInput" rows="8" placeholder="ERP Migration | Complete data mapping | Tope | 15/06/2026 | In Progress | Awaiting Finance sign-off
 ERP Migration | UAT sign-off AP module | Sarah | 10/06/2026 | At Risk | Test environment unstable
 Infrastructure | Firewall rule changes | Dev | 20/06/2026 | In Progress | None
-Infrastructure | Network cutover rehearsal | Dev | 25/06/2026 | Not Started | None
-Change Management | Training delivery Wave 1 | Marcus | 12/06/2026 | In Progress | None
-Change Management | Go-live comms pack | Marcus | 08/06/2026 | At Risk | Comms director on leave
-Governance | Steering committee pack | Tope | 05/06/2026 | Complete | None
-Governance | Risk register updated | Tope | 18/06/2026 | Not Started | None"></textarea>
+Governance | Steering committee pack | Tope | 05/06/2026 | Complete | None"></textarea>
 
     <div class="btn-row">
       <button onclick="loadSample()">Load sample data</button>
@@ -135,7 +150,12 @@ Governance | Risk register updated | Tope | 18/06/2026 | Not Started | None"></t
   </div>
 
   <div id="resultsCard" class="card" style="display:none;">
-    <div class="print-title" id="printTitle"></div>
+
+    <div class="print-header" id="printHeader">
+      <h1 id="printTitle">Project Status Report</h1>
+      <p id="printMeta"></p>
+    </div>
+
     <h2 class="no-print">Workstream RAG</h2>
     <div class="rag-row" id="ragCards"></div>
 
@@ -149,6 +169,8 @@ Governance | Risk register updated | Tope | 18/06/2026 | Not Started | None"></t
       </div>
     </div>
     <div class="report-box" id="reportOutput"></div>
+
+    <div class="print-footer">Generated by agentic-pm &mdash; github.com/TemitopeKadri/agentic-pm &mdash; Built by Temitope Kadri MAPM</div>
   </div>
 
 </div>
@@ -165,7 +187,8 @@ Governance | Risk register updated | Tope | 18/06/2026 | Not Started | None`;
 
 const TEMPLATE_CSV = `Workstream,Task name,Owner,Due date,Status,Blockers
 ERP Migration,Complete data mapping,Tope,15/06/2026,In Progress,Awaiting Finance sign-off
-Infrastructure,Firewall rule changes,Dev,20/06/2026,Not Started,None`;
+Infrastructure,Firewall rule changes,Dev,20/06/2026,Not Started,None
+Change Management,Training delivery,Marcus,25/06/2026,Not Started,None`;
 
 function loadSample() {
   document.getElementById('taskInput').value = SAMPLE_TASKS;
@@ -196,22 +219,20 @@ function handleFileUpload(event) {
   reader.onload = function(e) {
     const text = e.target.result;
     const lines = text.trim().split('\n');
-    const parsed = [];
     const isHeader = lines[0].toLowerCase().includes('workstream') || lines[0].toLowerCase().includes('task');
     const start = isHeader ? 1 : 0;
+    const parsed = [];
     for (let i = start; i < lines.length; i++) {
       const line = lines[i].trim();
       if (!line) continue;
       const sep = line.includes(',') && !line.includes('|') ? ',' : '|';
       const parts = line.split(sep).map(s => s.trim());
-      if (parts.length >= 5) {
-        parsed.push(parts.join(' | '));
-      }
+      if (parts.length >= 5) parsed.push(parts.join(' | '));
     }
     document.getElementById('taskInput').value = parsed.join('\n');
     document.getElementById('projectName').value = file.name.replace('.csv','').replace(/-/g,' ').replace(/_/g,' ');
     const fl = document.getElementById('fileLoaded');
-    fl.textContent = '✓ Loaded ' + (lines.length - (isHeader?1:0)) + ' tasks from ' + file.name;
+    fl.textContent = '\u2713 Loaded ' + parsed.length + ' tasks from ' + file.name;
     fl.style.display = 'block';
   };
   reader.readAsText(file);
@@ -224,10 +245,7 @@ uploadZone.addEventListener('drop', e => {
   e.preventDefault();
   uploadZone.classList.remove('dragover');
   const file = e.dataTransfer.files[0];
-  if (file && file.name.endsWith('.csv')) {
-    const fakeEvent = { target: { files: [file] } };
-    handleFileUpload(fakeEvent);
-  }
+  if (file && file.name.endsWith('.csv')) handleFileUpload({ target: { files: [file] } });
 });
 
 function copyReport() {
@@ -237,8 +255,7 @@ function copyReport() {
 function downloadReport() {
   const name = document.getElementById('projectName').value || 'project';
   const date = new Date().toISOString().slice(0,10);
-  const content = document.getElementById('reportOutput').innerText;
-  const blob = new Blob([content], {type: 'text/plain'});
+  const blob = new Blob([document.getElementById('reportOutput').innerText], {type:'text/plain'});
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = name.replace(/\s+/g,'-').toLowerCase() + '-status-' + date + '.txt';
@@ -247,8 +264,11 @@ function downloadReport() {
 
 function printReport() {
   const name = document.getElementById('projectName').value || 'Project';
-  const date = new Date().toLocaleDateString('en-GB', {day:'numeric',month:'long',year:'numeric'});
-  document.getElementById('printTitle').textContent = name + ' — Status Report — ' + date;
+  const date = new Date().toLocaleDateString('en-GB', {day:'numeric', month:'long', year:'numeric'});
+  const stk = document.getElementById('stakeholder');
+  const stkLabel = stk.options[stk.selectedIndex].text;
+  document.getElementById('printTitle').textContent = name + ' — Status Report';
+  document.getElementById('printMeta').textContent = 'Date: ' + date + '  |  Report type: ' + stkLabel + '  |  Generated by agentic-pm';
   window.print();
 }
 
